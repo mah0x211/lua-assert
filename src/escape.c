@@ -43,11 +43,14 @@ static int escape_lua(lua_State *L)
         return 1;
     }
 
-    lua_settop(L, 0);
+    // WARNING: In lua 5.3 and later, values passed to C functions are also
+    // subject to gc, so the value should not be removed from the stack while
+    // it is in use.
+    lua_settop(L, 1);
     for (size_t i = 0; i < len; i++) {
         unsigned char c = p[i];
 
-        if (BUFSIZ - head < 3) {
+        if (BUFSIZ - head < 5) {
             lua_pushlstring(L, buf, head);
             head = 0;
             argc++;

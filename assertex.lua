@@ -34,21 +34,7 @@ local retest = require('regex').test
 local escape = require('assertex.escape')
 
 local function dumpv(v)
-    -- NOTE: avoid bugs in lua 5.4.x
-    -- the following code is a reproduction of the segfault:
-    --
-    --   local s = string.rep(' ', 1024 * 64)
-    --   escape(string.format('%q', s))
-    --
-    -- to avoid that bugs, assign the return value to a variable and then pass
-    -- it to the function.
-    --
-    --   local s = string.rep(' ', 1024 * 64)
-    --   s = string.format('%q', s)
-    --   escape(s)
-    --
-    local s = dump(v, 0)
-    return escape(s)
+    return escape(dump(v, 0))
 end
 
 local _M = {}
