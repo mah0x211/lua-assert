@@ -30,6 +30,14 @@ local find = string.find
 local setmetatable = setmetatable
 local dump = require('dump')
 local isa = require('isa')
+local is_boolean = isa.boolean
+local is_int = isa.int
+local is_finite = isa.finite
+local is_nan = isa.nan
+local is_string = isa.string
+local is_table = isa.table
+local is_nil = isa.Nil
+local is_function = isa.Function
 local retest = require('regex').test
 local escape = require('assertex.escape')
 
@@ -40,7 +48,7 @@ end
 local _M = {}
 
 local function throws(f)
-    if not isa.Function(f) then
+    if not is_function(f) then
         error(
             format('invalid argument #1 (function expected, got %s)', type(f)),
             2)
@@ -63,7 +71,7 @@ for k, f in pairs(isa) do
                 return v
             elseif type(v) ~= 'number' then
                 error(format('<%s> is not %s', tostring(v), k), 2)
-            elseif isa.NaN(v) then
+            elseif is_nan(v) then
                 error(format('<nan> is not %s', k), 2)
             end
             error(format('<%s> is not %s', v, k), 2)
@@ -72,7 +80,7 @@ for k, f in pairs(isa) do
 end
 
 local function is_empty(v)
-    if not isa.Table(v) then
+    if not is_table(v) then
         error(format('invalid argument #1 (table expected, got %s)', type(v)), 3)
     end
     return not next(v)
@@ -101,8 +109,8 @@ local function is_equal(act, exp)
         error(format('invalid comparison #1 <%s> == #2 <%s>', t1, t2), 3)
     end
 
-    local av = dumpv(act, 0)
-    local ev = dumpv(exp, 0)
+    local av = dumpv(act)
+    local ev = dumpv(exp)
     return av == ev, av, ev
 end
 
@@ -131,7 +139,7 @@ end
 _M.not_equal = not_equal
 
 local function greater(v, x)
-    if not isa.Finite(v) or not isa.Finite(x) then
+    if not is_finite(v) or not is_finite(x) then
         error(format(
                   'invalid comparison #1 <%s> > #2 <%s>, argument must be the number except for infinity and nan',
                   tostring(v), tostring(x)), 2)
@@ -143,7 +151,7 @@ end
 _M.greater = greater
 
 local function greater_or_equal(v, x)
-    if not isa.Finite(v) or not isa.Finite(x) then
+    if not is_finite(v) or not is_finite(x) then
         error(format(
                   'invalid comparison #1 <%s> >= #2 <%s>, argument must be the number except for infinity and nan',
                   tostring(v), tostring(x)), 2)
@@ -155,7 +163,7 @@ end
 _M.greater_or_equal = greater_or_equal
 
 local function less(v, x)
-    if not isa.Finite(v) or not isa.Finite(x) then
+    if not is_finite(v) or not is_finite(x) then
         error(format(
                   'invalid comparison #1 <%s> < #2 <%s>, argument must be the number except for infinity and nan',
                   tostring(v), tostring(x)), 3)
@@ -167,7 +175,7 @@ end
 _M.less = less
 
 local function less_or_equal(v, x)
-    if not isa.Finite(v) or not isa.Finite(x) then
+    if not is_finite(v) or not is_finite(x) then
         error(format(
                   'invalid comparison #1 <%s> <= #2 <%s>, argument must be the number except for infinity and nan',
                   tostring(v), tostring(x)), 3)
@@ -180,20 +188,20 @@ _M.less_or_equal = less_or_equal
 
 local function match(s, pattern, plain, init)
     -- set plain to true by default
-    if isa.Nil(plain) then
+    if is_nil(plain) then
         plain = true
     end
 
-    if not isa.String(s) then
+    if not is_string(s) then
         error(format('invalid argument #1 (string expected, got %s)', type(s)),
               2)
-    elseif not isa.String(pattern) then
+    elseif not is_string(pattern) then
         error(format('invalid argument #2 (string expected, got %s)',
                      type(pattern)), 2)
-    elseif not isa.Boolean(plain) then
+    elseif not is_boolean(plain) then
         error(format('invalid argument #3 (boolean or nil expected, got %s)',
                      type(plain)), 2)
-    elseif init and not isa.Int(init) then
+    elseif init and not is_int(init) then
         error(format('invalid argument #4 (integer or nil expected, got %s)',
                      type(init)), 2)
     end
@@ -212,16 +220,16 @@ end
 _M.match = match
 
 local function re_match(s, pattern, flgs, offset)
-    if not isa.String(s) then
+    if not is_string(s) then
         error(format('invalid argument #1 (string expected, got %s)', type(s)),
               2)
-    elseif not isa.String(pattern) then
+    elseif not is_string(pattern) then
         error(format('invalid argument #2 (string expected, got %s)',
                      type(pattern)), 2)
-    elseif flgs and not isa.String(flgs) then
+    elseif flgs and not is_string(flgs) then
         error(format('invalid argument #3 (string or nil expected, got %s)',
                      type(flgs)), 2)
-    elseif offset and not isa.Int(offset) then
+    elseif offset and not is_int(offset) then
         error(format('invalid argument #4 (integer or nil expected, got %s)',
                      type(offset)), 2)
     end
@@ -246,7 +254,7 @@ _M.re_match = re_match
 local function __call(_, v, ...)
     if v == nil or v == false then
         local msg = select(1, ...)
-        if isa.String(msg) then
+        if is_string(msg) then
             error(msg, 2)
         end
         error('assertion failed!', 2)
