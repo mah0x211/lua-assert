@@ -140,6 +140,32 @@ expected: %q
 end
 _M.not_equal = not_equal
 
+local function is_rawequal(act, exp)
+    local av = torawstring(act)
+    local ev = torawstring(exp)
+    if av == ev then
+        return act
+    end
+    error(format([[not rawequal:
+  actual: %q
+expected: %q
+]], av, ev), 2)
+end
+_M.rawequal = is_rawequal
+
+local function not_rawequal(act, exp)
+    local av = torawstring(act)
+    local ev = torawstring(exp)
+    if av ~= ev then
+        return act
+    end
+    error(format([[rawequal:
+  actual: %q
+expected: %q
+]], av, ev), 2)
+end
+_M.not_rawequal = not_rawequal
+
 local function greater(v, x)
     if not is_finite(v) or not is_finite(x) then
         error(format(

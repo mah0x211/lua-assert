@@ -422,6 +422,72 @@ local function test_not_equal()
     end
 end
 
+local function test_rawequal()
+    local tbl = {}
+    local f = function()
+    end
+    local co = coroutine.create(f)
+    local nan = 0 / 0
+
+    -- test that throw error
+    for k, v in pairs({
+        [1] = 2,
+        [true] = false,
+        [tbl] = {1, 2, 3},
+        [f] = function()
+        end,
+        [co] = coroutine.create(f),
+    }) do
+        local ok, err = pcall(function()
+            assertex.rawequal(k, v)
+        end)
+        assert(not ok)
+        assert(find(err, 'not rawequal', nil, true))
+    end
+
+    -- test that not throw error
+    for _, v in ipairs({1, true, tbl, f, co, nan}) do
+        local ok, err = pcall(function()
+            assertex.rawequal(v, v)
+        end)
+        assert(ok)
+        assert(not err)
+    end
+end
+
+local function test_not_rawequal()
+    local tbl = {}
+    local f = function()
+    end
+    local co = coroutine.create(f)
+    local nan = 0 / 0
+
+    -- test that throw error
+    for _, v in pairs({1, true, tbl, f, co, nan}) do
+        local ok, err = pcall(function()
+            assertex.not_rawequal(v, v)
+        end)
+        assert(not ok)
+        assert(find(err, 'equal', nil, true))
+    end
+
+    -- test that not throw error
+    for k, v in pairs({
+        [1] = 2,
+        [true] = false,
+        [tbl] = {1},
+        [f] = function()
+        end,
+        [co] = coroutine.create(f),
+    }) do
+        local ok, err = pcall(function()
+            assertex.not_rawequal(k, v)
+        end)
+        assert(ok)
+        assert(not err)
+    end
+end
+
 local function test_greater()
     local nan = 0 / 0
 
@@ -639,6 +705,8 @@ test_empty()
 test_not_empty()
 test_equal()
 test_not_equal()
+test_rawequal()
+test_not_rawequal()
 test_greater()
 test_greater_or_equal()
 test_less()
