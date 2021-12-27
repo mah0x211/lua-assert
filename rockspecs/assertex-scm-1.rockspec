@@ -22,6 +22,12 @@ build = {
         assertex = 'assertex.lua',
         ['assertex.escape'] = {
             sources = { "src/escape.c" }
-        }
+        },
+        ['assertex.torawstring'] = {
+            sources = { "src/torawstring.c" }
+        },
+        ['assertex.lightuserdata'] = {
+            sources = { "src/lightuserdata.c" }
+        },
     },
 }
