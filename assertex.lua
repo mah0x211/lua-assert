@@ -40,12 +40,14 @@ local is_nil = isa.Nil
 local is_function = isa.Function
 local retest = require('regex').test
 local escape = require('assertex.escape')
+local torawstring = require('assertex.torawstring')
 
 local function dumpv(v)
     return escape(dump(v, 0))
 end
 
 local _M = {}
+_M.torawstring = torawstring
 
 local function throws(f)
     if not is_function(f) then
