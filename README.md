@@ -119,6 +119,15 @@ asserts that `v` is equal to `expected`.
 asserts that `v` is not equal to `expected`.
 
 
+### v = assertex.rawequal(v, expected)
+
+asserts that `v` is rawequal to `expected`.
+
+### v = assertex.not_rawequal(v, expected)
+
+asserts that `v` is not rawequal to `expected`.
+
+
 ### v = assertex.greater(v, x)
 
 asserts that `v` is greater than `x`.
@@ -146,9 +155,13 @@ the arguments are the same as for the `string.find` function.
 ### s = assertex.not_match(s, pattern, plain, init)
 
 asserts that the lua `pattern` will not match the string in `s`.  
-the arguments are the same as for the `string.find` function.
+
 
 ### s = assertex.re_match(s, pattern, flags, offset)
 
 asserts that the regular expression `pattern` will match the string in `s`.
 the arguments are the same as for the [regexp.test](https://github.com/mah0x211/lua-regex#ok-err--regextest-sbj-pattern--flgs--offset-) function.
+
+### s = assertex.re_match(s, pattern, flags, offset)
+
+asserts that the regular expression `pattern` will not match the string in `s`.
