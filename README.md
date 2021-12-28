@@ -143,6 +143,10 @@ asserts that `v` is less than or equal to `x`.
 asserts that the lua `pattern` will match the string in `s`.  
 the arguments are the same as for the `string.find` function.
 
+### s = assertex.not_match(s, pattern, plain, init)
+
+asserts that the lua `pattern` will not match the string in `s`.  
+the arguments are the same as for the `string.find` function.
 
 ### s = assertex.re_match(s, pattern, flags, offset)
 

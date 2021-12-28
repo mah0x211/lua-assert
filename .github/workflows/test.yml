@@ -54,16 +54,14 @@ jobs:
       name: Install
       run: |
         luarocks make
-
     -
       name: Run Test
       run: |
         lua -lluacov ./test/assertex_test.lua
-
     -
       name: Coveralls
       continue-on-error: true
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        luacov-coveralls -v
+        luacov-coveralls
