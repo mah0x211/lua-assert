@@ -741,6 +741,51 @@ local function test_re_match()
     assert(not err)
 end
 
+local function test_not_re_match()
+    -- test that throw error
+    local ok, err = pcall(function()
+        assertex.not_re_match('foo/bar/baz', 'foo/bar')
+    end)
+    assert(not ok)
+    assert(find(err, ': re_match', nil, true), err)
+
+    -- test that throw error if subject is not string
+    ok, err = pcall(function()
+        assertex.not_re_match(1)
+    end)
+    assert(not ok)
+    assert(find(err, format('#1 (string expected,'), nil, true), err)
+
+    -- test that throw error if pattern is not string
+    ok, err = pcall(function()
+        assertex.not_re_match('foo/bar/baz', 1)
+    end)
+    assert(not ok)
+    assert(find(err, format('#2 (string expected,'), nil, true), err)
+
+    -- test that throw error if plain is not boolean or nil
+    ok, err = pcall(function()
+        assertex.not_re_match('foo/bar/baz', 'foo', 1)
+    end)
+    assert(not ok)
+    assert(find(err, format('#3 (string or nil expected,'), nil, true), err)
+
+    -- test that throw error if offset is not integer or nil
+    ok, err = pcall(function()
+        assertex.not_re_match('foo/bar/baz', 'foo', nil, 1.1)
+    end)
+    assert(not ok)
+    assert(find(err, format('#4 (integer or nil expected,'), nil, true), err)
+
+    -- test that not throw error
+    ok, err = pcall(function()
+        local s = assertex.not_re_match('foo/bar/baz', 'boo/*[/].+az')
+        assert(s == 'foo/bar/baz')
+    end)
+    assert(ok)
+    assert(not err)
+end
+
 test_torawstring()
 test_call()
 test_newindex()
@@ -759,3 +804,4 @@ test_less_or_equal()
 test_match()
 test_not_match()
 test_re_match()
+test_not_re_match()

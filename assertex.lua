@@ -263,26 +263,32 @@ pattern: %q
 end
 _M.not_match = not_match
 
-local function re_match(s, pattern, flgs, offset)
+local function is_re_match(s, pattern, flgs, offset)
     if not is_string(s) then
         error(format('invalid argument #1 (string expected, got %s)', type(s)),
-              2)
+              3)
     elseif not is_string(pattern) then
         error(format('invalid argument #2 (string expected, got %s)',
-                     type(pattern)), 2)
+                     type(pattern)), 3)
     elseif flgs and not is_string(flgs) then
         error(format('invalid argument #3 (string or nil expected, got %s)',
-                     type(flgs)), 2)
+                     type(flgs)), 3)
     elseif offset and not is_int(offset) then
         error(format('invalid argument #4 (integer or nil expected, got %s)',
-                     type(offset)), 2)
+                     type(offset)), 3)
     end
 
     local ok, err = retest(s, pattern, flgs, offset)
-    if ok then
+    if err then
+        error(format("failed to call regex.test: %s", err), 3)
+    end
+
+    return ok
+end
+
+local function re_match(s, pattern, flgs, offset)
+    if is_re_match(s, pattern, flgs, offset) then
         return s
-    elseif err then
-        error(format("failed to call regex.test: %s", err), 2)
     end
 
     error(format([[no re_match:
@@ -291,9 +297,22 @@ pattern: %q
   flags: %q
  offset: %s
 ]], s, pattern, tostring(flgs), tostring(offset)), 2)
-
 end
 _M.re_match = re_match
+
+local function not_re_match(s, pattern, flgs, offset)
+    if not is_re_match(s, pattern, flgs, offset) then
+        return s
+    end
+
+    error(format([[re_match:
+subject: %q
+pattern: %q
+  flags: %q
+ offset: %s
+]], s, pattern, tostring(flgs), tostring(offset)), 2)
+end
+_M.not_re_match = not_re_match
 
 local function __call(_, v, ...)
     if v == nil or v == false then
