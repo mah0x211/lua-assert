@@ -49,14 +49,14 @@ end
 local _M = {}
 _M.torawstring = torawstring
 
-local function throws(f)
+local function throws(f, ...)
     if not is_function(f) then
         error(
             format('invalid argument #1 (function expected, got %s)', type(f)),
             2)
     end
 
-    local ok, err = pcall(f)
+    local ok, err = pcall(f, ...)
     if ok then
         error(format("<%s> should throw an error", tostring(f)), 2)
     end

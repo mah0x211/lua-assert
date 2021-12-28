@@ -97,8 +97,11 @@ end
 local function test_throws()
     -- test that throw error
     local ok, err = pcall(function()
-        assertex.throws(function()
-        end)
+        assertex.throws(function(a, b, c)
+            assert(a == 'foo')
+            assert(b == 1)
+            assert(c == true)
+        end, 'foo', 1, true)
     end)
     assert(not ok)
     assert(find(err, 'should throw an error', nil, true), err)

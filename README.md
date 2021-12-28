@@ -18,7 +18,7 @@ luarocks install assertex
 issues an error when the value of its argument `v` is `false` (i.e., `nil` or `false`); otherwise, returns all its arguments. `message` is an error message; when absent, it defaults to `"assertion failed!"`.
 
 
-### err = assertex.throws(f)
+### err = assertex.throws(f, ...)
 
 asserts that the function `f` to throws an error.
 
