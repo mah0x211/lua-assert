@@ -214,7 +214,7 @@ local function less_or_equal(v, x)
 end
 _M.less_or_equal = less_or_equal
 
-local function match(s, pattern, plain, init)
+local function is_match(s, pattern, plain, init)
     -- set plain to true by default
     if is_nil(plain) then
         plain = true
@@ -222,20 +222,23 @@ local function match(s, pattern, plain, init)
 
     if not is_string(s) then
         error(format('invalid argument #1 (string expected, got %s)', type(s)),
-              2)
+              3)
     elseif not is_string(pattern) then
         error(format('invalid argument #2 (string expected, got %s)',
-                     type(pattern)), 2)
+                     type(pattern)), 3)
     elseif not is_boolean(plain) then
         error(format('invalid argument #3 (boolean or nil expected, got %s)',
-                     type(plain)), 2)
+                     type(plain)), 3)
     elseif init and not is_int(init) then
         error(format('invalid argument #4 (integer or nil expected, got %s)',
-                     type(init)), 2)
+                     type(init)), 3)
     end
 
-    local ok = find(s, pattern, init, plain)
-    if ok then
+    return find(s, pattern, init, plain)
+end
+
+local function match(s, pattern, plain, init)
+    if is_match(s, pattern, plain, init) then
         return s
     end
     error(format([[no match:
@@ -246,6 +249,19 @@ pattern: %q
 ]], s, pattern, tostring(plain), tostring(init)), 2)
 end
 _M.match = match
+
+local function not_match(s, pattern, plain, init)
+    if not is_match(s, pattern, plain, init) then
+        return s
+    end
+    error(format([[match:
+subject: %q
+pattern: %q
+  plain: %s
+   init: %s
+]], s, pattern, tostring(plain), tostring(init)), 2)
+end
+_M.not_match = not_match
 
 local function re_match(s, pattern, flgs, offset)
     if not is_string(s) then
