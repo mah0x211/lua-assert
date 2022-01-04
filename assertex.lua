@@ -27,6 +27,7 @@ local format = string.format
 local lower = string.lower
 local sub = string.sub
 local find = string.find
+local getmetatable = debug.getmetatable
 local setmetatable = setmetatable
 local dump = require('dump')
 local isa = require('isa')
@@ -44,6 +45,16 @@ local torawstring = require('assertex.torawstring')
 
 local function dumpv(v)
     return escape(dump(v, 0))
+end
+
+local function convert2string(v)
+    if not is_string(v) then
+        local mt = getmetatable(v)
+        if is_table(mt) and is_function(mt.__tostring) then
+            return tostring(v)
+        end
+    end
+    return v
 end
 
 local _M = {}
@@ -220,6 +231,7 @@ local function is_match(s, pattern, plain, init)
         plain = true
     end
 
+    s = convert2string(s)
     if not is_string(s) then
         error(format('invalid argument #1 (string expected, got %s)', type(s)),
               3)
@@ -264,6 +276,7 @@ end
 _M.not_match = not_match
 
 local function is_re_match(s, pattern, flgs, offset)
+    s = convert2string(s)
     if not is_string(s) then
         error(format('invalid argument #1 (string expected, got %s)', type(s)),
               3)
