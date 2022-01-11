@@ -2,5 +2,5 @@ codefromstrings = false
 runreport = true
 deletestats = false
 modules = {
-    assertex = 'assertex.lua',
+    assert = 'assert.lua',
 }

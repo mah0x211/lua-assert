@@ -1,6 +1,6 @@
 std = 'min'
 include_files = {
-    'assertex.lua',
+    'assert.lua',
     'lib/*.lua',
     'test/*_test.lua',
 }
