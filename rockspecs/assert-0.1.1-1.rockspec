@@ -20,7 +20,7 @@ dependencies = {
 build = {
     type = 'builtin',
     modules = {
-        assert = 'assert.lua',
+        assert = 'assertex.lua',
         ['assert.escape'] = {
             sources = { "src/escape.c" }
         }
