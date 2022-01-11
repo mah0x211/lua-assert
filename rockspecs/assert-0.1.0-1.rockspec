@@ -1,13 +1,13 @@
 rockspec_format = '3.0'
-package = 'assertex'
-version = '0.1.2-1'
+package = 'assert'
+version = '0.1.0-1'
 source = {
-    url = 'git://github.com/mah0x211/lua-assertex.git',
-    tag = 'v0.1.2'
+    url = 'git://github.com/mah0x211/lua-assert.git',
+    tag = 'v0.1.0'
 }
 description = {
     summary = 'simple assertion module for lua',
-    homepage = 'https://github.com/mah0x211/lua-assertex',
+    homepage = 'https://github.com/mah0x211/lua-assert',
     license = 'MIT/X11',
     maintainer = 'Masatoshi Fukunaga',
 }
@@ -20,8 +20,8 @@ dependencies = {
 build = {
     type = 'builtin',
     modules = {
-        assertex = 'assertex.lua',
-        ['assertex.escape'] = {
+        assert = 'assert.lua',
+        ['assert.escape'] = {
             sources = { "src/escape.c" }
         }
     },

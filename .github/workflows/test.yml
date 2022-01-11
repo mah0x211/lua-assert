@@ -57,7 +57,7 @@ jobs:
     -
       name: Run Test
       run: |
-        lua -lluacov ./test/assertex_test.lua
+        lua -lluacov ./test/assert_test.lua
     -
       name: Coveralls
       continue-on-error: true

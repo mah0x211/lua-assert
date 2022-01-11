@@ -40,8 +40,8 @@ local is_table = isa.table
 local is_nil = isa.Nil
 local is_function = isa.Function
 local retest = require('regex').test
-local escape = require('assertex.escape')
-local torawstring = require('assertex.torawstring')
+local escape = require('assert.escape')
+local torawstring = require('assert.torawstring')
 
 local function dumpv(v)
     return escape(dump(v, 0))
@@ -344,8 +344,5 @@ local function __newindex(_, k, v)
                  tostring(v)), 2)
 end
 
-return setmetatable({}, {
-    __call = __call,
-    __newindex = __newindex,
-    __index = _M,
-})
+return
+    setmetatable({}, {__call = __call, __newindex = __newindex, __index = _M})

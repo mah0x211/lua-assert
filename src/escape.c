@@ -118,7 +118,7 @@ static int escape_lua(lua_State *L)
     return 1;
 }
 
-LUALIB_API int luaopen_assertex_escape(lua_State *L)
+LUALIB_API int luaopen_assert_escape(lua_State *L)
 {
     lua_pushcfunction(L, escape_lua);
     return 1;

@@ -2,9 +2,9 @@ local assert = assert
 local pcall = pcall
 local find = string.find
 local format = string.format
-local assertex = require('assertex')
-local torawstring = require('assertex.torawstring')
-local lightuserdata = require('assertex.lightuserdata')
+local assertex = require('assert')
+local torawstring = require('assert.torawstring')
+local lightuserdata = require('assert.lightuserdata')
 
 local function test_torawstring()
     -- test that convert value to raw string

@@ -66,7 +66,7 @@ static int torawstring_lua(lua_State *L)
     }
 }
 
-LUALIB_API int luaopen_assertex_torawstring(lua_State *L)
+LUALIB_API int luaopen_assert_torawstring(lua_State *L)
 {
     lua_pushcfunction(L, torawstring_lua);
     return 1;

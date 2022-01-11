@@ -22,7 +22,7 @@
 #include <lauxlib.h>
 #include <lua.h>
 
-LUALIB_API int luaopen_assertex_lightuserdata(lua_State *L)
+LUALIB_API int luaopen_assert_lightuserdata(lua_State *L)
 {
     static const char data[0];
 
