@@ -258,7 +258,7 @@ subject: %q
 pattern: %q
   plain: %s
    init: %s
-]], s, pattern, tostring(plain), tostring(init)), 2)
+]], s, pattern, tostring(is_nil(plain) or plain), tostring(init)), 2)
 end
 _M.match = match
 
@@ -271,7 +271,7 @@ subject: %q
 pattern: %q
   plain: %s
    init: %s
-]], s, pattern, tostring(plain), tostring(init)), 2)
+]], s, pattern, tostring(is_nil(plain) or plain), tostring(init)), 2)
 end
 _M.not_match = not_match
 
