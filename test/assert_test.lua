@@ -61,6 +61,17 @@ local function test_call()
     assert(not ok)
     assert(find(err, 'failed with false', nil, true))
 
+    -- test that use a second arguments as an error message
+    ok, err = pcall(function()
+        assertex(nil, setmetatable({}, {
+            __tostring = function()
+                return '__tostring metamethod has been called'
+            end,
+        }))
+    end)
+    assert(not ok)
+    assert(find(err, '__tostring metamethod has been called', nil, true))
+
     -- test that not throw error if the argument is neither nil nor false
     for _, v in ipairs({
         -1,

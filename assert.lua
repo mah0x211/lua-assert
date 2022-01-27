@@ -327,16 +327,15 @@ pattern: %q
 end
 _M.not_re_match = not_re_match
 
-local function __call(_, v, ...)
+local function __call(_, v, msg, ...)
     if v == nil or v == false then
-        local msg = select(1, ...)
-        if is_string(msg) then
-            error(msg, 2)
+        if msg == nil then
+            error('assertion failed!', 2)
         end
-        error('assertion failed!', 2)
+        error(tostring(msg), 2)
     end
 
-    return v, ...
+    return v, msg, ...
 end
 
 local function __newindex(_, k, v)
