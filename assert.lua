@@ -29,6 +29,8 @@ local sub = string.sub
 local find = string.find
 local getmetatable = debug.getmetatable
 local setmetatable = setmetatable
+local pairs = pairs
+local type = type
 local dump = require('dump')
 local isa = require('isa')
 local is_boolean = isa.boolean
@@ -430,6 +432,67 @@ pattern: %q
 ]], s, pattern, tostring(flgs), tostring(offset)), 2)
 end
 _M.not_re_match = not_re_match
+
+--- is_contains tests whether a v contains the exp or not.
+--- @param v any
+--- @param exp any
+--- @return boolean
+local function is_contains(v, exp)
+    local t1 = type(v)
+    local t2 = type(exp)
+
+    if t1 ~= t2 then
+        return false
+    elseif t1 ~= 'table' then
+        return is_equal(v, exp)
+    end
+
+    local ev = dumpv(exp)
+    if ev == dumpv(v) then
+        return true
+    end
+
+    local stack = {v}
+    while #stack > 0 do
+        local tbl = stack[#stack]
+        stack[#stack] = nil
+        if ev == dumpv(tbl) then
+            return true
+        end
+
+        for _, tv in pairs(tbl) do
+            if type(tv) == 'table' then
+                stack[#stack + 1] = tv
+            end
+        end
+    end
+
+    return false
+end
+
+--- contains returns v if a v contains the exp, otherwise it throws an error.
+--- @param v any
+--- @param exp any
+--- @return boolean
+local function contains(v, exp)
+    if is_contains(v, exp) then
+        return v
+    end
+    error(format([[%s is not contained in %s]], dump(exp), dump(v)), 2)
+end
+_M.contains = contains
+
+--- not_contains returns v if a v not contains the exp, otherwise it throws an error.
+--- @param v any
+--- @param exp any
+--- @return boolean
+local function not_contains(v, exp)
+    if not is_contains(v, exp) then
+        return v
+    end
+    error(format([[%s is contained in %s]], dump(exp), dump(v)), 2)
+end
+_M.not_contains = not_contains
 
 local function __call(_, v, msg, ...)
     if v == nil or v == false then

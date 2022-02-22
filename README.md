@@ -176,3 +176,13 @@ re_match returns `s` if a regular expression `pattern` is found in the string `s
 ## s = assert.not_re_match(s, pattern, flags, offset)
 
 not_re_match returns `s` if a regular expression `pattern` is not found in the string `s`, otherwise it throws an error.
+
+
+## v = assert.contains(v, exptected)
+
+contains returns `v` if a `v` contains the `expected`, otherwise it throws an error.
+
+
+## v = assert.not_contains(v, exptected)
+
+not_contains returns `v` if a `v` not contains the `expected`, otherwise it throws an error.
