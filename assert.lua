@@ -29,6 +29,8 @@ local sub = string.sub
 local find = string.find
 local getmetatable = debug.getmetatable
 local setmetatable = setmetatable
+local pairs = pairs
+local type = type
 local dump = require('dump')
 local isa = require('isa')
 local is_boolean = isa.boolean
@@ -43,10 +45,17 @@ local retest = require('regex').test
 local escape = require('assert.escape')
 local torawstring = require('assert.torawstring')
 
+--- dumpv returns an escaped string of a stringified data structure.
+--- @param v any
+--- @return string
 local function dumpv(v)
     return escape(dump(v, 0))
 end
 
+--- convert2string converts a value to a string with the tostring function or
+--- the __tostring meta-method call.
+--- @param v any
+--- @return string
 local function convert2string(v)
     if not is_string(v) then
         local mt = getmetatable(v)
@@ -60,6 +69,10 @@ end
 local _M = {}
 _M.torawstring = torawstring
 
+--- throws expects function f to fail and returns the error raised by function f.
+--- @param f function
+--- @vararg any
+--- @return string err
 local function throws(f, ...)
     if not is_function(f) then
         error(
@@ -92,6 +105,9 @@ for k, f in pairs(isa) do
     end
 end
 
+--- is_empty expects v to be an empty table.
+--- @param v table
+--- @return boolean
 local function is_empty(v)
     if not is_table(v) then
         error(format('invalid argument #1 (table expected, got %s)', type(v)), 3)
@@ -99,6 +115,9 @@ local function is_empty(v)
     return not next(v)
 end
 
+--- empty returns v if v is an empty table, otherwise it throws an error.
+--- @param v table
+--- @return table v
 local function empty(v)
     if is_empty(v) then
         return v
@@ -107,6 +126,9 @@ local function empty(v)
 end
 _M.empty = empty
 
+--- not_empty returns v if v is not an empty table, otherwise it throws an error.
+--- @param v table
+--- @return table v
 local function not_empty(v)
     if not is_empty(v) then
         return v
@@ -115,6 +137,13 @@ local function not_empty(v)
 end
 _M.not_empty = not_empty
 
+--- is_equal compares act and exp, and throws an error if the types of act and
+--- exp are different.
+--- @param act any
+--- @param exp any
+--- @return boolean equal
+--- @return string av
+--- @return string ev
 local function is_equal(act, exp)
     local t1 = type(act)
     local t2 = type(exp)
@@ -127,6 +156,10 @@ local function is_equal(act, exp)
     return av == ev, av, ev
 end
 
+--- equal returns act if act and exp are equal, otherwise it throws an error.
+--- @param act any
+--- @param exp any
+--- @return any act
 local function equal(act, exp)
     local eq, av, ev = is_equal(act, exp)
     if eq then
@@ -139,6 +172,10 @@ expected: %q
 end
 _M.equal = equal
 
+--- not_equal returns act if act and exp are not equal, otherwise it throws an error.
+--- @param act any
+--- @param exp any
+--- @return any act
 local function not_equal(act, exp)
     local eq, av, ev = is_equal(act, exp)
     if not eq then
@@ -151,6 +188,11 @@ expected: %q
 end
 _M.not_equal = not_equal
 
+--- is_rawequal returns act if act and exp are primitively equal, otherwise it
+--- throws an error.
+--- @param act any
+--- @param exp any
+--- @return any act
 local function is_rawequal(act, exp)
     local av = torawstring(act)
     local ev = torawstring(exp)
@@ -164,6 +206,11 @@ expected: %q
 end
 _M.rawequal = is_rawequal
 
+--- not_rawequal returns act if act and exp are not primitively equal, otherwise
+--- it throws an error.
+--- @param act any
+--- @param exp any
+--- @return any act
 local function not_rawequal(act, exp)
     local av = torawstring(act)
     local ev = torawstring(exp)
@@ -177,6 +224,10 @@ expected: %q
 end
 _M.not_rawequal = not_rawequal
 
+--- greater returns v if v is greater than x, otherwise it throws an error.
+--- @param v number finite number
+--- @param x number finite number
+--- @return number v
 local function greater(v, x)
     if not is_finite(v) or not is_finite(x) then
         error(format(
@@ -189,6 +240,11 @@ local function greater(v, x)
 end
 _M.greater = greater
 
+--- greater_or_equal returns v if v is greater than or equal to x, otherwise it throws
+--- an error.
+--- @param v number finite number
+--- @param x number finite number
+--- @return number v
 local function greater_or_equal(v, x)
     if not is_finite(v) or not is_finite(x) then
         error(format(
@@ -201,6 +257,10 @@ local function greater_or_equal(v, x)
 end
 _M.greater_or_equal = greater_or_equal
 
+--- less returns v if v is less than x, otherwise it throws an error.
+--- @param v number finite number
+--- @param x number finite number
+--- @return number v
 local function less(v, x)
     if not is_finite(v) or not is_finite(x) then
         error(format(
@@ -213,6 +273,11 @@ local function less(v, x)
 end
 _M.less = less
 
+--- less_or_equal returns v if v is less than or equal to x, otherwise it throws
+--- an error.
+--- @param v number finite number
+--- @param x number finite number
+--- @return number v
 local function less_or_equal(v, x)
     if not is_finite(v) or not is_finite(x) then
         error(format(
@@ -225,6 +290,13 @@ local function less_or_equal(v, x)
 end
 _M.less_or_equal = less_or_equal
 
+--- is_match finds a position that matches pattern in the string s.
+--- @param s string
+--- @param pattern string
+--- @param plain boolean|nil default true
+--- @param init integer
+--- @return number head
+--- @return number tail
 local function is_match(s, pattern, plain, init)
     -- set plain to true by default
     if is_nil(plain) then
@@ -249,6 +321,13 @@ local function is_match(s, pattern, plain, init)
     return find(s, pattern, init, plain)
 end
 
+--- match returns s if a pattern is found in the string s, otherwise it throws
+--- an error.
+--- @param s string
+--- @param pattern string
+--- @param plain boolean|nil
+--- @param init integer
+--- @return string s
 local function match(s, pattern, plain, init)
     if is_match(s, pattern, plain, init) then
         return s
@@ -262,6 +341,13 @@ pattern: %q
 end
 _M.match = match
 
+--- not_match returns s if a pattern is not found in the string s, otherwise it
+--- throws an error.
+--- @param s string
+--- @param pattern string
+--- @param plain boolean|nil
+--- @param init integer
+--- @return string s
 local function not_match(s, pattern, plain, init)
     if not is_match(s, pattern, plain, init) then
         return s
@@ -275,6 +361,12 @@ pattern: %q
 end
 _M.not_match = not_match
 
+--- is_re_match tests whether a regular expression pattern can be found in the string s.
+--- @param s string
+--- @param pattern string
+--- @param flgs string
+--- @param offset integer
+--- @return boolean
 local function is_re_match(s, pattern, flgs, offset)
     s = convert2string(s)
     if not is_string(s) then
@@ -299,6 +391,13 @@ local function is_re_match(s, pattern, flgs, offset)
     return ok
 end
 
+--- re_match returns s if a regular expression pattern is found in the string s,
+--- otherwise it throws an error.
+--- @param s string
+--- @param pattern string
+--- @param flgs string
+--- @param offset integer
+--- @return string
 local function re_match(s, pattern, flgs, offset)
     if is_re_match(s, pattern, flgs, offset) then
         return s
@@ -313,6 +412,13 @@ pattern: %q
 end
 _M.re_match = re_match
 
+--- not_re_match returns s if a regular expression pattern is not found in the
+--- string s, otherwise it throws an error.
+--- @param s string
+--- @param pattern string
+--- @param flgs string
+--- @param offset integer
+--- @return string
 local function not_re_match(s, pattern, flgs, offset)
     if not is_re_match(s, pattern, flgs, offset) then
         return s
@@ -326,6 +432,67 @@ pattern: %q
 ]], s, pattern, tostring(flgs), tostring(offset)), 2)
 end
 _M.not_re_match = not_re_match
+
+--- is_contains tests whether a v contains the exp or not.
+--- @param v any
+--- @param exp any
+--- @return boolean
+local function is_contains(v, exp)
+    local t1 = type(v)
+    local t2 = type(exp)
+
+    if t1 ~= t2 then
+        return false
+    elseif t1 ~= 'table' then
+        return is_equal(v, exp)
+    end
+
+    local ev = dumpv(exp)
+    if ev == dumpv(v) then
+        return true
+    end
+
+    local stack = {v}
+    while #stack > 0 do
+        local tbl = stack[#stack]
+        stack[#stack] = nil
+        if ev == dumpv(tbl) then
+            return true
+        end
+
+        for _, tv in pairs(tbl) do
+            if type(tv) == 'table' then
+                stack[#stack + 1] = tv
+            end
+        end
+    end
+
+    return false
+end
+
+--- contains returns v if a v contains the exp, otherwise it throws an error.
+--- @param v any
+--- @param exp any
+--- @return boolean
+local function contains(v, exp)
+    if is_contains(v, exp) then
+        return v
+    end
+    error(format([[%s is not contained in %s]], dump(exp), dump(v)), 2)
+end
+_M.contains = contains
+
+--- not_contains returns v if a v not contains the exp, otherwise it throws an error.
+--- @param v any
+--- @param exp any
+--- @return boolean
+local function not_contains(v, exp)
+    if not is_contains(v, exp) then
+        return v
+    end
+    error(format([[%s is contained in %s]], dump(exp), dump(v)), 2)
+end
+_M.not_contains = not_contains
 
 local function __call(_, v, msg, ...)
     if v == nil or v == false then

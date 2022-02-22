@@ -49,7 +49,6 @@ jobs:
       name: Install Tools
       run: |
         luarocks install luacov
-        luarocks install luacov-coveralls
     -
       name: Install
       run: |
@@ -59,9 +58,7 @@ jobs:
       run: |
         lua -lluacov ./test/assert_test.lua
     -
-      name: Coveralls
-      continue-on-error: true
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        luacov-coveralls
+      name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        flags: unittests

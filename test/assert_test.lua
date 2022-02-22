@@ -800,6 +800,57 @@ local function test_not_re_match()
     assert(not err)
 end
 
+local function test_contains()
+    -- test that throw error
+    local ok, err = pcall(function()
+        assertex.contains({foo = 'bar'}, {hello = 'world'})
+    end)
+    assert(not ok)
+    assert(find(err, 'is not contained', nil, true))
+
+    -- test that not throw error
+    for _, v in ipairs({
+        {act = 'hello', exp = 'hello'},
+        {act = 1, exp = 1},
+        {act = true, exp = true},
+        {
+            act = {
+                foo = {bar = {baz = {qux = 'quux'}}},
+                hello = {world = 'contained'},
+            },
+            exp = {
+                foo = {bar = {baz = {qux = 'quux'}}},
+                hello = {world = 'contained'},
+            },
+        },
+    }) do
+        ok, err = pcall(function()
+            assertex.contains(v.act, v.exp)
+        end)
+        assert(ok, err)
+        assert(not err, err)
+    end
+end
+
+local function test_not_contains()
+    -- test that throw error
+    local ok, err = pcall(function()
+        assertex.not_contains({foo = 'bar'}, {foo = 'bar'})
+    end)
+    assert(not ok)
+    assert(find(err, 'is contained', nil, true))
+
+    -- test that not throw error
+    ok, err = pcall(function()
+        assertex.not_contains({
+            foo = {bar = {baz = {qux = 'quux'}}},
+            hello = {world = 'contained'},
+        }, {foo = {bar = {baz = {qux = 'quu'}}}, hello = {world = 'contained'}})
+    end)
+    assert(ok, err)
+    assert(not err, err)
+end
+
 test_torawstring()
 test_call()
 test_newindex()
@@ -819,3 +870,5 @@ test_match()
 test_not_match()
 test_re_match()
 test_not_re_match()
+test_contains()
+test_not_contains()
