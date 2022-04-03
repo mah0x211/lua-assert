@@ -2,7 +2,7 @@ rockspec_format = '3.0'
 package = 'assert'
 version = 'scm-1'
 source = {
-    url = 'git://github.com/mah0x211/lua-assert.git'
+    url = 'git+https://github.com/mah0x211/lua-assert.git'
 }
 description = {
     summary = 'simple assertion module for lua',

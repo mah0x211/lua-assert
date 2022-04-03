@@ -337,7 +337,7 @@ subject: %q
 pattern: %q
   plain: %s
    init: %s
-]], s, pattern, tostring(is_nil(plain) or plain), tostring(init)), 2)
+]], tostring(s), pattern, tostring(is_nil(plain) or plain), tostring(init)), 2)
 end
 _M.match = match
 
@@ -357,7 +357,7 @@ subject: %q
 pattern: %q
   plain: %s
    init: %s
-]], s, pattern, tostring(is_nil(plain) or plain), tostring(init)), 2)
+]], tostring(s), pattern, tostring(is_nil(plain) or plain), tostring(init)), 2)
 end
 _M.not_match = not_match
 
@@ -408,7 +408,7 @@ subject: %q
 pattern: %q
   flags: %q
  offset: %s
-]], s, pattern, tostring(flgs), tostring(offset)), 2)
+]], tostring(s), pattern, tostring(flgs), tostring(offset)), 2)
 end
 _M.re_match = re_match
 
@@ -429,7 +429,7 @@ subject: %q
 pattern: %q
   flags: %q
  offset: %s
-]], s, pattern, tostring(flgs), tostring(offset)), 2)
+]], tostring(s), pattern, tostring(flgs), tostring(offset)), 2)
 end
 _M.not_re_match = not_re_match
 
