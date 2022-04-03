@@ -32,7 +32,8 @@ jobs:
           - "5.2"
           - "5.3"
           - "5.4"
-
+          - "luajit-2.0.5"
+          - "luajit-openresty"
     steps:
     -
       name: Checkout
@@ -44,15 +45,15 @@ jobs:
         luaVersion: ${{ matrix.lua-version }}
     -
       name: Setup Luarocks
-      uses: leafo/gh-actions-luarocks@v4.0.0
-    -
-      name: Install Tools
-      run: |
-        luarocks install luacov
+      uses: leafo/gh-actions-luarocks@v4
     -
       name: Install
       run: |
         luarocks make
+    -
+      name: Install Tools
+      run: |
+        luarocks install luacov
     -
       name: Run Test
       run: |
