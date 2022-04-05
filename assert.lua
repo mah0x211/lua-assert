@@ -27,6 +27,7 @@ local format = string.format
 local lower = string.lower
 local sub = string.sub
 local find = string.find
+local match = string.match
 local getmetatable = debug.getmetatable
 local setmetatable = setmetatable
 local pairs = pairs
@@ -321,14 +322,14 @@ local function is_match(s, pattern, plain, init)
     return find(s, pattern, init, plain)
 end
 
---- match returns s if a pattern is found in the string s, otherwise it throws
+--- lua_match returns s if a pattern is found in the string s, otherwise it throws
 --- an error.
 --- @param s string
 --- @param pattern string
 --- @param plain boolean|nil
 --- @param init integer
 --- @return string s
-local function match(s, pattern, plain, init)
+local function lua_match(s, pattern, plain, init)
     if is_match(s, pattern, plain, init) then
         return s
     end
@@ -339,7 +340,7 @@ pattern: %q
    init: %s
 ]], tostring(s), pattern, tostring(is_nil(plain) or plain), tostring(init)), 2)
 end
-_M.match = match
+_M.match = lua_match
 
 --- not_match returns s if a pattern is not found in the string s, otherwise it
 --- throws an error.
@@ -348,7 +349,7 @@ _M.match = match
 --- @param plain boolean|nil
 --- @param init integer
 --- @return string s
-local function not_match(s, pattern, plain, init)
+local function not_lua_match(s, pattern, plain, init)
     if not is_match(s, pattern, plain, init) then
         return s
     end
@@ -359,7 +360,7 @@ pattern: %q
    init: %s
 ]], tostring(s), pattern, tostring(is_nil(plain) or plain), tostring(init)), 2)
 end
-_M.not_match = not_match
+_M.not_match = not_lua_match
 
 --- is_re_match tests whether a regular expression pattern can be found in the string s.
 --- @param s string
@@ -438,33 +439,14 @@ _M.not_re_match = not_re_match
 --- @param exp any
 --- @return boolean
 local function is_contains(v, exp)
-    local t1 = type(v)
-    local t2 = type(exp)
-
-    if t1 ~= t2 then
-        return false
-    elseif t1 ~= 'table' then
-        return is_equal(v, exp)
-    end
-
+    local av = dumpv(v)
     local ev = dumpv(exp)
-    if ev == dumpv(v) then
+
+    if av == ev or find(av, ev, nil, true) then
         return true
-    end
-
-    local stack = {v}
-    while #stack > 0 do
-        local tbl = stack[#stack]
-        stack[#stack] = nil
-        if ev == dumpv(tbl) then
-            return true
-        end
-
-        for _, tv in pairs(tbl) do
-            if type(tv) == 'table' then
-                stack[#stack + 1] = tv
-            end
-        end
+    elseif is_table(exp) then
+        ev = match(ev, '{ (.+) }')
+        return find(av, ev, nil, true) ~= nil
     end
 
     return false
@@ -510,5 +492,8 @@ local function __newindex(_, k, v)
                  tostring(v)), 2)
 end
 
-return
-    setmetatable({}, {__call = __call, __newindex = __newindex, __index = _M})
+return setmetatable({}, {
+    __call = __call,
+    __newindex = __newindex,
+    __index = _M,
+})

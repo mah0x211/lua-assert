@@ -9,15 +9,42 @@ local lightuserdata = require('assert.lightuserdata')
 local function test_torawstring()
     -- test that convert value to raw string
     for _, v in ipairs({
-        {arg = true, match = '^true$'},
-        {arg = false, match = '^false$'},
-        {arg = 1, match = '^1$'},
-        {arg = 1.2, match = '^1%.2$'},
-        {arg = 0 / 0, match = '^-*nan$'},
-        {arg = math.huge, match = '^inf$'},
-        {arg = -math.huge, match = '^-inf$'},
-        {arg = 'foo', match = '^string: '},
-        {arg = {}, match = '^table: '},
+        {
+            arg = true,
+            match = '^true$',
+        },
+        {
+            arg = false,
+            match = '^false$',
+        },
+        {
+            arg = 1,
+            match = '^1$',
+        },
+        {
+            arg = 1.2,
+            match = '^1%.2$',
+        },
+        {
+            arg = 0 / 0,
+            match = '^-*nan$',
+        },
+        {
+            arg = math.huge,
+            match = '^inf$',
+        },
+        {
+            arg = -math.huge,
+            match = '^-inf$',
+        },
+        {
+            arg = 'foo',
+            match = '^string: ',
+        },
+        {
+            arg = {},
+            match = '^table: ',
+        },
         {
             arg = function()
             end,
@@ -28,8 +55,14 @@ local function test_torawstring()
             end),
             match = '^thread: ',
         },
-        {arg = io.open('/dev/null'), match = '^userdata: '},
-        {arg = lightuserdata, match = '^userdata: '},
+        {
+            arg = io.open('/dev/null'),
+            match = '^userdata: ',
+        },
+        {
+            arg = lightuserdata,
+            match = '^userdata: ',
+        },
     }) do
         local s = torawstring(v.arg)
         assert(find(s, v.match),
@@ -86,7 +119,9 @@ local function test_call()
     }) do
         ok, err = pcall(function()
             local tbl = {}
-            local res = {assertex(v, 'foo', 1, tbl)}
+            local res = {
+                assertex(v, 'foo', 1, tbl),
+            }
             -- test that returns all arguments
             assert(res[1] == v and res[2] == 'foo' and res[3] == 1 and res[4] ==
                        tbl)
@@ -147,22 +182,159 @@ local function test_is()
 
     -- test that throw error
     for k, t in pairs({
-        ['boolean'] = {str, num, nan, inf, tbl, f, co},
-        ['true'] = {str, num, nan, inf, tbl, f, co, false},
-        ['false'] = {str, num, nan, inf, tbl, f, co, true},
-        ['nil'] = {str, num, nan, inf, tbl, f, co, true, false},
-        ['none'] = {str, num, inf, tbl, f, co, true},
-        ['table'] = {str, num, nan, inf, f, co, true, false},
-        ['function'] = {str, num, nan, inf, tbl, co, true, false},
-        ['thread'] = {str, num, nan, inf, tbl, f, true, false},
+        ['boolean'] = {
+            str,
+            num,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+        },
+        ['true'] = {
+            str,
+            num,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            false,
+        },
+        ['false'] = {
+            str,
+            num,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+        },
+        ['nil'] = {
+            str,
+            num,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['none'] = {
+            str,
+            num,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+        },
+        ['table'] = {
+            str,
+            num,
+            nan,
+            inf,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['function'] = {
+            str,
+            num,
+            nan,
+            inf,
+            tbl,
+            co,
+            true,
+            false,
+        },
+        ['thread'] = {
+            str,
+            num,
+            nan,
+            inf,
+            tbl,
+            f,
+            true,
+            false,
+        },
         -- ['userdata'] = {},
-        ['string'] = {num, nan, inf, tbl, f, co, true, false},
-        ['nan'] = {str, num, inf, tbl, f, co, true, false},
-        ['number'] = {str, tbl, f, co, true, false},
-        ['finite'] = {str, nan, inf, tbl, f, co, true, false},
-        ['unsigned'] = {-1, str, nan, inf, tbl, f, co, true, false},
-        ['int'] = {str, fnum, nan, inf, tbl, f, co, true, false},
-        ['int8'] = {128, -129, str, fnum, nan, inf, tbl, f, co, true, false},
+        ['string'] = {
+            num,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['nan'] = {
+            str,
+            num,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['number'] = {
+            str,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['finite'] = {
+            str,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['unsigned'] = {
+            -1,
+            str,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['int'] = {
+            str,
+            fnum,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['int8'] = {
+            128,
+            -129,
+            str,
+            fnum,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
         ['int16'] = {
             32768,
             -32769,
@@ -206,8 +378,32 @@ local function test_is()
             true,
             false,
         },
-        ['uint8'] = {256, -1, str, fnum, nan, inf, tbl, f, co, true, false},
-        ['uint16'] = {65536, -1, str, fnum, nan, inf, tbl, f, co, true, false},
+        ['uint8'] = {
+            256,
+            -1,
+            str,
+            fnum,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['uint16'] = {
+            65536,
+            -1,
+            str,
+            fnum,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
         ['uint32'] = {
             4294967296,
             -1,
@@ -234,27 +430,85 @@ local function test_is()
 
     -- test that not throw error
     for k, t in pairs({
-        ['boolean'] = {true, false},
-        ['true'] = {true},
-        ['false'] = {false},
-        ['none'] = {false, 0, '', nan},
-        ['table'] = {tbl},
-        ['function'] = {f},
-        ['thread'] = {co},
+        ['boolean'] = {
+            true,
+            false,
+        },
+        ['true'] = {
+            true,
+        },
+        ['false'] = {
+            false,
+        },
+        ['none'] = {
+            false,
+            0,
+            '',
+            nan,
+        },
+        ['table'] = {
+            tbl,
+        },
+        ['function'] = {
+            f,
+        },
+        ['thread'] = {
+            co,
+        },
         -- ['userdata'] = {},
-        ['string'] = {str},
-        ['nan'] = {nan},
-        ['number'] = {num, fnum, nan, inf},
-        ['finite'] = {num},
-        ['unsigned'] = {0, 1},
-        ['int'] = {-1, 0, 1},
-        ['int8'] = {-128, 0, 127},
-        ['int16'] = {-32768, 32767},
-        ['int32'] = {-2147483648, 2147483647},
-        ['uint'] = {0, 1},
-        ['uint8'] = {0, 255},
-        ['uint16'] = {0, 65535},
-        ['uint32'] = {0, 4294967295},
+        ['string'] = {
+            str,
+        },
+        ['nan'] = {
+            nan,
+        },
+        ['number'] = {
+            num,
+            fnum,
+            nan,
+            inf,
+        },
+        ['finite'] = {
+            num,
+        },
+        ['unsigned'] = {
+            0,
+            1,
+        },
+        ['int'] = {
+            -1,
+            0,
+            1,
+        },
+        ['int8'] = {
+            -128,
+            0,
+            127,
+        },
+        ['int16'] = {
+            -32768,
+            32767,
+        },
+        ['int32'] = {
+            -2147483648,
+            2147483647,
+        },
+        ['uint'] = {
+            0,
+            1,
+        },
+        ['uint8'] = {
+            0,
+            255,
+        },
+        ['uint16'] = {
+            0,
+            65535,
+        },
+        ['uint32'] = {
+            0,
+            4294967295,
+        },
     }) do
         for _, v in ipairs(t) do
             local ok, err = pcall(function()
@@ -277,7 +531,9 @@ end
 local function test_empty()
     -- test that throw error
     local ok, err = pcall(function()
-        assertex.empty({1})
+        assertex.empty({
+            1,
+        })
     end)
     assert(not ok)
     assert(find(err, 'is not empty', nil, true))
@@ -332,7 +588,9 @@ local function test_not_empty()
 
     -- test that not throw error if argument is not empty
     ok, err = pcall(function()
-        assertex.not_empty({1})
+        assertex.not_empty({
+            1,
+        })
     end)
     assert(ok)
     assert(not err)
@@ -349,7 +607,11 @@ local function test_equal()
     for k, v in pairs({
         [1] = 2,
         [true] = false,
-        [tbl] = {1, 2, 3},
+        [tbl] = {
+            1,
+            2,
+            3,
+        },
         [f] = function()
         end,
         [co] = coroutine.create(f),
@@ -378,7 +640,14 @@ local function test_equal()
     end
 
     -- test that not throw error
-    for _, v in ipairs({1, true, tbl, f, co, nan}) do
+    for _, v in ipairs({
+        1,
+        true,
+        tbl,
+        f,
+        co,
+        nan,
+    }) do
         local ok, err = pcall(function()
             assertex.equal(v, v)
         end)
@@ -395,7 +664,14 @@ local function test_not_equal()
     local nan = 0 / 0
 
     -- test that throw error
-    for _, v in pairs({1, true, tbl, f, co, nan}) do
+    for _, v in pairs({
+        1,
+        true,
+        tbl,
+        f,
+        co,
+        nan,
+    }) do
         local ok, err = pcall(function()
             assertex.not_equal(v, v)
         end)
@@ -423,7 +699,9 @@ local function test_not_equal()
     for k, v in pairs({
         [1] = 2,
         [true] = false,
-        [tbl] = {1},
+        [tbl] = {
+            1,
+        },
         [f] = function()
         end,
         [co] = coroutine.create(f),
@@ -447,7 +725,11 @@ local function test_rawequal()
     for k, v in pairs({
         [1] = 2,
         [true] = false,
-        [tbl] = {1, 2, 3},
+        [tbl] = {
+            1,
+            2,
+            3,
+        },
         [f] = function()
         end,
         [co] = coroutine.create(f),
@@ -460,7 +742,14 @@ local function test_rawequal()
     end
 
     -- test that not throw error
-    for _, v in ipairs({1, true, tbl, f, co, nan}) do
+    for _, v in ipairs({
+        1,
+        true,
+        tbl,
+        f,
+        co,
+        nan,
+    }) do
         local ok, err = pcall(function()
             assertex.rawequal(v, v)
         end)
@@ -477,7 +766,14 @@ local function test_not_rawequal()
     local nan = 0 / 0
 
     -- test that throw error
-    for _, v in pairs({1, true, tbl, f, co, nan}) do
+    for _, v in pairs({
+        1,
+        true,
+        tbl,
+        f,
+        co,
+        nan,
+    }) do
         local ok, err = pcall(function()
             assertex.not_rawequal(v, v)
         end)
@@ -489,7 +785,9 @@ local function test_not_rawequal()
     for k, v in pairs({
         [1] = 2,
         [true] = false,
-        [tbl] = {1},
+        [tbl] = {
+            1,
+        },
         [f] = function()
         end,
         [co] = coroutine.create(f),
@@ -513,7 +811,16 @@ local function test_greater()
     assert(find(err, format('<%s> is not greater than <%s>', 1, 2), nil, true))
 
     -- test that throw error if argument is not finite number
-    for _, v in ipairs({{nan, 1}, {1, nan}}) do
+    for _, v in ipairs({
+        {
+            nan,
+            1,
+        },
+        {
+            1,
+            nan,
+        },
+    }) do
         ok, err = pcall(function()
             assertex.greater(v[1], v[2])
         end)
@@ -542,7 +849,16 @@ local function test_greater_or_equal()
                 nil, true))
 
     -- test that throw error if argument is not finite number
-    for _, v in ipairs({{nan, 1}, {1, nan}}) do
+    for _, v in ipairs({
+        {
+            nan,
+            1,
+        },
+        {
+            1,
+            nan,
+        },
+    }) do
         ok, err = pcall(function()
             assertex.greater_or_equal(v[1], v[2])
         end)
@@ -552,7 +868,16 @@ local function test_greater_or_equal()
     end
 
     -- test that not throw error
-    for _, v in ipairs({{1, -1}, {1, 1}}) do
+    for _, v in ipairs({
+        {
+            1,
+            -1,
+        },
+        {
+            1,
+            1,
+        },
+    }) do
         ok, err = pcall(function()
             assertex.greater_or_equal(v[1], v[2])
         end)
@@ -572,7 +897,16 @@ local function test_less()
     assert(find(err, format('<%s> is not less than <%s>', 2, 1), nil, true))
 
     -- test that throw error if argument is not finite number
-    for _, v in ipairs({{nan, 1}, {1, nan}}) do
+    for _, v in ipairs({
+        {
+            nan,
+            1,
+        },
+        {
+            1,
+            nan,
+        },
+    }) do
         ok, err = pcall(function()
             assertex.less(v[1], v[2])
         end)
@@ -601,7 +935,16 @@ local function test_less_or_equal()
                 nil, true))
 
     -- test that throw error if argument is not finite number
-    for _, v in ipairs({{nan, 1}, {1, nan}}) do
+    for _, v in ipairs({
+        {
+            nan,
+            1,
+        },
+        {
+            1,
+            nan,
+        },
+    }) do
         ok, err = pcall(function()
             assertex.less_or_equal(v[1], v[2])
         end)
@@ -611,7 +954,16 @@ local function test_less_or_equal()
     end
 
     -- test that not throw error
-    for _, v in ipairs({{1, 2}, {1, 1}}) do
+    for _, v in ipairs({
+        {
+            1,
+            2,
+        },
+        {
+            1,
+            1,
+        },
+    }) do
         ok, err = pcall(function()
             assertex.less_or_equal(v[1], v[2])
         end)
@@ -803,24 +1155,53 @@ end
 local function test_contains()
     -- test that throw error
     local ok, err = pcall(function()
-        assertex.contains({foo = 'bar'}, {hello = 'world'})
+        assertex.contains({
+            foo = 'bar',
+        }, {
+            hello = 'world',
+        })
     end)
     assert(not ok)
     assert(find(err, 'is not contained', nil, true))
 
     -- test that not throw error
     for _, v in ipairs({
-        {act = 'hello', exp = 'hello'},
-        {act = 1, exp = 1},
-        {act = true, exp = true},
+        {
+            act = 'hello',
+            exp = 'hello',
+        },
+        {
+            act = 1,
+            exp = 1,
+        },
+        {
+            act = true,
+            exp = true,
+        },
         {
             act = {
-                foo = {bar = {baz = {qux = 'quux'}}},
-                hello = {world = 'contained'},
+                foo = {
+                    bar = {
+                        baz = {
+                            qux = 'quux',
+                        },
+                    },
+                },
+                hello = {
+                    world = 'contained',
+                },
             },
             exp = {
-                foo = {bar = {baz = {qux = 'quux'}}},
-                hello = {world = 'contained'},
+                foo = {
+                    bar = {
+                        baz = {
+                            qux = 'quux',
+                        },
+                    },
+                },
+                hello = {
+                    world = 'contained',
+                },
             },
         },
     }) do
@@ -835,7 +1216,11 @@ end
 local function test_not_contains()
     -- test that throw error
     local ok, err = pcall(function()
-        assertex.not_contains({foo = 'bar'}, {foo = 'bar'})
+        assertex.not_contains({
+            foo = 'bar',
+        }, {
+            foo = 'bar',
+        })
     end)
     assert(not ok)
     assert(find(err, 'is contained', nil, true))
@@ -843,9 +1228,28 @@ local function test_not_contains()
     -- test that not throw error
     ok, err = pcall(function()
         assertex.not_contains({
-            foo = {bar = {baz = {qux = 'quux'}}},
-            hello = {world = 'contained'},
-        }, {foo = {bar = {baz = {qux = 'quu'}}}, hello = {world = 'contained'}})
+            foo = {
+                bar = {
+                    baz = {
+                        qux = 'quux',
+                    },
+                },
+            },
+            hello = {
+                world = 'contained',
+            },
+        }, {
+            foo = {
+                bar = {
+                    baz = {
+                        qux = 'quu',
+                    },
+                },
+            },
+            hello = {
+                world = 'contained',
+            },
+        })
     end)
     assert(ok, err)
     assert(not err, err)
