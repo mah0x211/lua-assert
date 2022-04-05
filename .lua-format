@@ -7,3 +7,4 @@ keep_simple_control_block_one_line: false
 keep_simple_function_one_line: false
 chop_down_table: true
 chop_down_kv_table: true
+column_table_limit: 1
