@@ -189,6 +189,24 @@ expected: %q
 end
 _M.not_equal = not_equal
 
+--- equal_string returns act if tostring(act) and tostring(exp) are equal, otherwise it throws an error.
+--- @param act any
+--- @param exp any
+--- @return any act
+local function equal_string(act, exp)
+    local av = tostring(act)
+    local ev = tostring(exp)
+    local eq = av == ev
+    if eq then
+        return act
+    end
+    error(format([[not equal string:
+  actual: %q
+expected: %q
+]], av, ev), 2)
+end
+_M.equal_string = equal_string
+
 --- is_rawequal returns act if act and exp are primitively equal, otherwise it
 --- throws an error.
 --- @param act any

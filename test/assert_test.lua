@@ -714,6 +714,50 @@ local function test_not_equal()
     end
 end
 
+local function test_equal_string()
+    local tbl = {}
+    local f = function()
+    end
+    local co = coroutine.create(f)
+    local nan = 0 / 0
+
+    -- test that throw error
+    for k, v in pairs({
+        [1] = 2,
+        [true] = false,
+        [tbl] = {
+            1,
+            2,
+            3,
+        },
+        [f] = function()
+        end,
+        [co] = coroutine.create(f),
+    }) do
+        local ok, err = pcall(function()
+            assertex.equal_string(k, v)
+        end)
+        assert(not ok)
+        assert(find(err, 'not equal string', nil, true))
+    end
+
+    -- test that not throw error
+    for _, v in ipairs({
+        1,
+        true,
+        tbl,
+        f,
+        co,
+        nan,
+    }) do
+        local ok, err = pcall(function()
+            assertex.equal_string(v, v)
+        end)
+        assert(ok)
+        assert(not err)
+    end
+end
+
 local function test_rawequal()
     local tbl = {}
     local f = function()
@@ -1264,6 +1308,7 @@ test_empty()
 test_not_empty()
 test_equal()
 test_not_equal()
+test_equal_string()
 test_rawequal()
 test_not_rawequal()
 test_greater()
