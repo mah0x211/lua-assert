@@ -124,6 +124,16 @@ equal returns `v` if `v` and `expected` are equal, otherwise it throws an error.
 not_equal returns `v` if `v` and `expected` are not equal, otherwise it throws an error.
 
 
+## v = assert.equal_string(v, expected)
+
+equal returns `v` if `tostring(v)` and `tostring(expected)` are equal, otherwise it throws an error.
+
+
+## v = assert.not_equal_string(v, expected)
+
+not_equal returns `v` if `tostring(v)` and `tostring(expected)` are not equal, otherwise it throws an error.
+
+
 ## v = assert.rawequal(v, expected)
 
 rawequal returns `v` if `v` and `expected` are primitively equal, otherwise it throws an error.
