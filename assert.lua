@@ -27,11 +27,11 @@ local format = string.format
 local lower = string.lower
 local sub = string.sub
 local find = string.find
-local match = string.match
 local getmetatable = debug.getmetatable
 local setmetatable = setmetatable
 local pairs = pairs
 local type = type
+local flatten = require('table.flatten')
 local dump = require('dump')
 local isa = require('isa')
 local is_boolean = isa.boolean
@@ -330,8 +330,8 @@ _M.less_or_equal = less_or_equal
 --- is_match finds a position that matches pattern in the string s.
 --- @param s string
 --- @param pattern string
---- @param plain boolean|nil default true
---- @param init integer
+--- @param plain? boolean default true
+--- @param init? integer
 --- @return number head
 --- @return number tail
 local function is_match(s, pattern, plain, init)
@@ -475,17 +475,35 @@ _M.not_re_match = not_re_match
 --- @param exp any
 --- @return boolean
 local function is_contains(v, exp)
-    local av = dumpv(v)
-    local ev = dumpv(exp)
-
-    if av == ev or find(av, ev, nil, true) then
-        return true
-    elseif is_table(exp) then
-        ev = match(ev, '{ (.+) }')
-        return find(av, ev, nil, true) ~= nil
+    if is_string(v) then
+        -- verify that a v string contains an exp string
+        return is_match(v, exp)
+    elseif not is_table(v) then
+        -- verify that a v equal to an exp
+        return is_equal(v, exp)
     end
 
-    return false
+    local av = flatten(v)
+
+    if not is_table(exp) then
+        -- verify that a v table contains an exp value
+        local t = type(exp)
+        for _, val in pairs(av) do
+            if type(val) == t and val == exp then
+                return true
+            end
+        end
+        return false
+    end
+
+    -- verify that a v table contains key-value pairs of an exp table
+    local ev = flatten(exp)
+    for key, val in pairs(ev) do
+        if not av[key] or av[key] ~= val then
+            return false
+        end
+    end
+    return true
 end
 
 --- contains returns v if a v contains the exp, otherwise it throws an error.

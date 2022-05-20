@@ -1277,7 +1277,10 @@ local function test_contains()
                     world = 'contained',
                 },
             },
-            exp = {
+            exp = 'contained',
+        },
+        {
+            act = {
                 foo = {
                     bar = {
                         baz = {
@@ -1289,6 +1292,14 @@ local function test_contains()
                     world = 'contained',
                 },
             },
+            exp = {
+                foo = {
+                    ['bar.baz'] = {
+                        qux = 'quux',
+                    },
+                },
+                ['hello.world'] = 'contained',
+            },
         },
     }) do
         ok, err = pcall(function()
@@ -1297,6 +1308,25 @@ local function test_contains()
         assert(ok, err)
         assert(not err, err)
     end
+
+    -- test that throw error if attempt to compare arguments of different types
+    ok, err = pcall(function()
+        assertex.contains('foo', {
+            'foo',
+        })
+    end)
+    assert(not ok)
+    assert(find(err, 'invalid argument #2 (string expected, got table)', nil,
+                true), err)
+
+    -- test that throw error if different type arguments comparison
+    ok, err = pcall(function()
+        assertex.contains(true, {
+            'foo',
+        })
+    end)
+    assert(not ok)
+    assert(find(err, 'invalid comparison', nil, true), err)
 end
 
 local function test_not_contains()
