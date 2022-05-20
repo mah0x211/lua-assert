@@ -2,7 +2,7 @@ rockspec_format = '3.0'
 package = 'assert'
 version = 'scm-1'
 source = {
-    url = 'git+https://github.com/mah0x211/lua-assert.git'
+    url = 'git+https://github.com/mah0x211/lua-assert.git',
 }
 description = {
     summary = 'simple assertion module for lua',
@@ -15,19 +15,26 @@ dependencies = {
     'mah0x211/dump >= 0.1.1',
     'mah0x211/isa >= 0.1.0',
     'mah0x211/regex >= 0.1.0',
+    'mah0x211/table-flatten >= 0.3.0',
 }
 build = {
     type = 'builtin',
     modules = {
         assert = 'assert.lua',
         ['assert.escape'] = {
-            sources = { "src/escape.c" }
+            sources = {
+                "src/escape.c",
+            },
         },
         ['assert.torawstring'] = {
-            sources = { "src/torawstring.c" }
+            sources = {
+                "src/torawstring.c",
+            },
         },
         ['assert.lightuserdata'] = {
-            sources = { "src/lightuserdata.c" }
+            sources = {
+                "src/lightuserdata.c",
+            },
         },
     },
 }
