@@ -1285,6 +1285,7 @@ local function test_contains()
                     bar = {
                         baz = {
                             qux = 'quux',
+                            tbl = {},
                         },
                     },
                 },
@@ -1296,6 +1297,7 @@ local function test_contains()
                 foo = {
                     ['bar.baz'] = {
                         qux = 'quux',
+                        tbl = {},
                     },
                 },
                 ['hello.world'] = 'contained',
