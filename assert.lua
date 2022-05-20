@@ -499,7 +499,16 @@ local function is_contains(v, exp)
     -- verify that a v table contains key-value pairs of an exp table
     local ev = flatten(exp)
     for key, val in pairs(ev) do
-        if not av[key] or av[key] ~= val then
+        local t = type(val)
+        local aval = av[key]
+
+        if type(aval) ~= t then
+            return false
+        elseif t == 'table' then
+            if dumpv(aval) ~= dumpv(val) then
+                return false
+            end
+        elseif aval ~= val then
             return false
         end
     end
