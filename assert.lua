@@ -150,6 +150,9 @@ local function is_equal(act, exp)
     local t2 = type(exp)
     if t1 ~= t2 then
         error(format('invalid comparison #1 <%s> == #2 <%s>', t1, t2), 3)
+    elseif t1 == 'number' then
+        return act == exp or (is_nan(act) and is_nan(exp)), dumpv(act),
+               dumpv(exp)
     end
 
     local av = dumpv(act)
