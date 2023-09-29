@@ -1,3 +1,4 @@
+require('luacov')
 local assert = assert
 local pcall = pcall
 local find = string.find

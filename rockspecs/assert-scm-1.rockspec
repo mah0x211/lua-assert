@@ -1,37 +1,36 @@
-rockspec_format = '3.0'
-package = 'assert'
-version = 'scm-1'
+package = "assert"
+version = "scm-1"
 source = {
-    url = 'git+https://github.com/mah0x211/lua-assert.git',
+    url = "git+https://github.com/mah0x211/lua-assert.git",
 }
 description = {
-    summary = 'simple assertion module for lua',
-    homepage = 'https://github.com/mah0x211/lua-assert',
-    license = 'MIT/X11',
-    maintainer = 'Masatoshi Fukunaga',
+    summary = "simple assertion module for lua",
+    homepage = "https://github.com/mah0x211/lua-assert",
+    license = "MIT/X11",
+    maintainer = "Masatoshi Fukunaga",
 }
 dependencies = {
-    'lua >= 5.1',
-    'mah0x211/dump >= 0.1.1',
-    'mah0x211/isa >= 0.1.0',
-    'mah0x211/regex >= 0.1.0',
-    'mah0x211/table-flatten >= 0.3.0',
+    "lua >= 5.1",
+    "dump >= 0.1.1",
+    "isa >= 0.1.0",
+    "regex >= 0.1.0",
+    "table-flatten >= 0.3.0",
 }
 build = {
-    type = 'builtin',
+    type = "builtin",
     modules = {
-        assert = 'assert.lua',
-        ['assert.escape'] = {
+        assert = "assert.lua",
+        ["assert.escape"] = {
             sources = {
                 "src/escape.c",
             },
         },
-        ['assert.torawstring'] = {
+        ["assert.torawstring"] = {
             sources = {
                 "src/torawstring.c",
             },
         },
-        ['assert.lightuserdata'] = {
+        ["assert.lightuserdata"] = {
             sources = {
                 "src/lightuserdata.c",
             },
