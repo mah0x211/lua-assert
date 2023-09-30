@@ -89,6 +89,25 @@ local function throws(f, ...)
 end
 _M.throws = throws
 
+--- not_throws expects function f will not fail.
+--- @param f function
+--- @vararg any
+--- @return any res
+local function not_throws(f, ...)
+    if not is_function(f) then
+        error(
+            format('invalid argument #1 (function expected, got %s)', type(f)),
+            2)
+    end
+
+    local ok, res = pcall(f, ...)
+    if not ok then
+        error(format("<%s> should not throw an error: %s", tostring(f), res), 2)
+    end
+    return res
+end
+_M.not_throws = not_throws
+
 -- export funcs with lowercase names in isa module
 for k, f in pairs(isa) do
     local c = sub(k, 1, 1)
@@ -102,6 +121,16 @@ for k, f in pairs(isa) do
                 error(format('<nan> is not %s', k), 2)
             end
             error(format('<%s> is not %s', v, k), 2)
+        end
+        _M['not_' .. k] = function(v)
+            if not f(v) then
+                return v
+            elseif type(v) ~= 'number' then
+                error(format('<%s> is %s', tostring(v), k), 2)
+            elseif is_nan(v) then
+                error(format('<nan> is %s', k), 2)
+            end
+            error(format('<%s> is %s', v, k), 2)
         end
     end
 end

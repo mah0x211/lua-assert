@@ -170,6 +170,34 @@ local function test_throws()
     assert(not err)
 end
 
+local function test_not_throws()
+    -- test that not throw error
+    local ok, err = pcall(function()
+        return assertex.not_throws(function(a)
+            assert(a == 'foo')
+            return 'hello'
+        end, 'foo')
+    end)
+    assert(ok)
+    assert(err == 'hello')
+
+    -- test that throw error if argument is not function
+    ok, err = pcall(function()
+        assertex.not_throws(1)
+    end)
+    assert(not ok)
+    assert(find(err, '#1 (function expected,', nil, true), err)
+
+    -- test that throw error
+    ok, err = pcall(function()
+        assertex.not_throws(function()
+            error('fail')
+        end)
+    end)
+    assert(ok == false)
+    assert(find(err, 'should not throw an error', nil, true), err)
+end
+
 local function test_is()
     local str = 'foo'
     local num = 1
@@ -517,6 +545,365 @@ local function test_is()
             end)
             assert(ok)
             assert(not err)
+        end
+    end
+
+    -- testing the nil value
+    local ok, err = pcall(function()
+        assertex.is_nil(nil)
+        assertex.is_none(nil)
+    end)
+    assert(ok)
+    assert(not err)
+end
+
+local function test_not()
+    local str = 'foo'
+    local num = 1
+    local fnum = 1.3
+    local nan = 0 / 0
+    local inf = math.huge
+    local tbl = {}
+    local f = function()
+    end
+    local co = coroutine.create(f)
+
+    -- test that not throw error
+    for k, t in pairs({
+        ['boolean'] = {
+            str,
+            num,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+        },
+        ['true'] = {
+            str,
+            num,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            false,
+        },
+        ['false'] = {
+            str,
+            num,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+        },
+        ['nil'] = {
+            str,
+            num,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['none'] = {
+            str,
+            num,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+        },
+        ['table'] = {
+            str,
+            num,
+            nan,
+            inf,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['function'] = {
+            str,
+            num,
+            nan,
+            inf,
+            tbl,
+            co,
+            true,
+            false,
+        },
+        ['thread'] = {
+            str,
+            num,
+            nan,
+            inf,
+            tbl,
+            f,
+            true,
+            false,
+        },
+        -- ['userdata'] = {},
+        ['string'] = {
+            num,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['nan'] = {
+            str,
+            num,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['number'] = {
+            str,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['finite'] = {
+            str,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['unsigned'] = {
+            -1,
+            str,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['int'] = {
+            str,
+            fnum,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['int8'] = {
+            128,
+            -129,
+            str,
+            fnum,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['int16'] = {
+            32768,
+            -32769,
+            str,
+            fnum,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['int32'] = {
+            2147483648,
+            -2147483649,
+            str,
+            fnum,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['uint'] = {
+            str,
+            fnum,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            str,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['uint8'] = {
+            256,
+            -1,
+            str,
+            fnum,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['uint16'] = {
+            65536,
+            -1,
+            str,
+            fnum,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+        ['uint32'] = {
+            4294967296,
+            -1,
+            str,
+            fnum,
+            nan,
+            inf,
+            tbl,
+            f,
+            co,
+            true,
+            false,
+        },
+    }) do
+        for _, v in ipairs(t) do
+            local ok, err = pcall(function()
+                -- print('not_' .. k, v)
+                assertex['not_' .. k](v)
+            end)
+            assert(ok)
+            assert(not err)
+        end
+    end
+
+    -- test that throw error
+    for k, t in pairs({
+        ['boolean'] = {
+            true,
+            false,
+        },
+        ['true'] = {
+            true,
+        },
+        ['false'] = {
+            false,
+        },
+        ['none'] = {
+            false,
+            0,
+            '',
+            nan,
+        },
+        ['table'] = {
+            tbl,
+        },
+        ['function'] = {
+            f,
+        },
+        ['thread'] = {
+            co,
+        },
+        -- ['userdata'] = {},
+        ['string'] = {
+            str,
+        },
+        ['nan'] = {
+            nan,
+        },
+        ['number'] = {
+            num,
+            fnum,
+            nan,
+            inf,
+        },
+        ['finite'] = {
+            num,
+        },
+        ['unsigned'] = {
+            0,
+            1,
+        },
+        ['int'] = {
+            -1,
+            0,
+            1,
+        },
+        ['int8'] = {
+            -128,
+            0,
+            127,
+        },
+        ['int16'] = {
+            -32768,
+            32767,
+        },
+        ['int32'] = {
+            -2147483648,
+            2147483647,
+        },
+        ['uint'] = {
+            0,
+            1,
+        },
+        ['uint8'] = {
+            0,
+            255,
+        },
+        ['uint16'] = {
+            0,
+            65535,
+        },
+        ['uint32'] = {
+            0,
+            4294967295,
+        },
+    }) do
+        for _, v in ipairs(t) do
+            local ok, err = pcall(function()
+                assertex['not_' .. k](v)
+            end)
+            assert(ok == false)
+            assert(find(err, 'is ' .. k, nil, true), err)
         end
     end
 
@@ -1378,7 +1765,9 @@ test_torawstring()
 test_call()
 test_newindex()
 test_throws()
+test_not_throws()
 test_is()
+test_not()
 test_empty()
 test_not_empty()
 test_equal()
