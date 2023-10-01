@@ -385,7 +385,7 @@ local function lua_match(s, pattern, plain, init)
     if is_match(s, pattern, plain, init) then
         return s
     end
-    error(format([[no match:
+    error(format([[the given string should match a pattern:
 subject: %q
 pattern: %q
   plain: %s
@@ -405,7 +405,7 @@ local function not_lua_match(s, pattern, plain, init)
     if not is_match(s, pattern, plain, init) then
         return s
     end
-    error(format([[match:
+    error(format([[the given string should not match a pattern:
 subject: %q
 pattern: %q
   plain: %s
@@ -456,7 +456,7 @@ local function re_match(s, pattern, flgs, offset)
         return s
     end
 
-    error(format([[no re_match:
+    error(format([[the given string should match a regular expression pattern:
 subject: %q
 pattern: %q
   flags: %q
@@ -477,7 +477,8 @@ local function not_re_match(s, pattern, flgs, offset)
         return s
     end
 
-    error(format([[re_match:
+    error(format(
+              [[the given string should not match a regular expression pattern:
 subject: %q
 pattern: %q
   flags: %q
