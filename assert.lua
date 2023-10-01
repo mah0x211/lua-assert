@@ -72,7 +72,7 @@ _M.torawstring = torawstring
 
 --- throws expects function f to fail and returns the error raised by function f.
 --- @param f function
---- @vararg any
+--- @param ... any function arguments
 --- @return string err
 local function throws(f, ...)
     if not is_function(f) then
@@ -91,7 +91,7 @@ _M.throws = throws
 
 --- not_throws expects function f will not fail.
 --- @param f function
---- @vararg any
+--- @param ... any function arguments
 --- @return any res
 local function not_throws(f, ...)
     if not is_function(f) then
@@ -221,23 +221,44 @@ expected: %q
 end
 _M.not_equal = not_equal
 
---- is_rawequal returns act if act and exp are primitively equal, otherwise it
+--- is_rawequal compares act and exp, and throws an error if the types of act
+--- and exp are different.
+--- @param act any
+--- @param exp any
+--- @return boolean equal
+--- @return string av
+--- @return string ev
+local function is_rawequal(act, exp)
+    local t1 = type(act)
+    local t2 = type(exp)
+    if t1 ~= t2 then
+        error(format('invalid comparison #1 <%s> == #2 <%s>', t1, t2), 3)
+    elseif t1 == 'number' then
+        return act == exp or (is_nan(act) and is_nan(exp)), dumpv(act),
+               dumpv(exp)
+    end
+
+    local av = torawstring(act)
+    local ev = torawstring(exp)
+    return av == ev, av, ev
+end
+
+--- rawequal returns act if act and exp are primitively equal, otherwise it
 --- throws an error.
 --- @param act any
 --- @param exp any
 --- @return any act
-local function is_rawequal(act, exp)
-    local av = torawstring(act)
-    local ev = torawstring(exp)
-    if av == ev then
+local function rawequal(act, exp)
+    local eq, av, ev = is_rawequal(act, exp)
+    if eq then
         return act
     end
-    error(format([[not rawequal:
+    error(format([[the two given values should be raw equal:
   actual: %q
 expected: %q
 ]], av, ev), 2)
 end
-_M.rawequal = is_rawequal
+_M.rawequal = rawequal
 
 --- not_rawequal returns act if act and exp are not primitively equal, otherwise
 --- it throws an error.
@@ -245,12 +266,11 @@ _M.rawequal = is_rawequal
 --- @param exp any
 --- @return any act
 local function not_rawequal(act, exp)
-    local av = torawstring(act)
-    local ev = torawstring(exp)
-    if av ~= ev then
+    local eq, av, ev = is_rawequal(act, exp)
+    if not eq then
         return act
     end
-    error(format([[rawequal:
+    error(format([[the two given values should not be raw equal:
   actual: %q
 expected: %q
 ]], av, ev), 2)

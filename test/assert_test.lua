@@ -1126,7 +1126,7 @@ local function test_rawequal()
             assertex.rawequal(k, v)
         end)
         assert(not ok)
-        assert(find(err, 'not rawequal', nil, true))
+        assert(find(err, 'should be raw equal', nil, true))
     end
 
     -- test that not throw error
@@ -1144,6 +1144,13 @@ local function test_rawequal()
         assert(ok)
         assert(not err)
     end
+
+    -- test that throw error if arguments are not of the same type
+    local ok, err = pcall(function()
+        assertex.rawequal(1, false)
+    end)
+    assert(not ok)
+    assert(find(err, 'invalid comparison'))
 end
 
 local function test_not_rawequal()
@@ -1166,7 +1173,7 @@ local function test_not_rawequal()
             assertex.not_rawequal(v, v)
         end)
         assert(not ok)
-        assert(find(err, 'equal', nil, true))
+        assert(find(err, 'should not be raw equal', nil, true))
     end
 
     -- test that not throw error
@@ -1186,6 +1193,13 @@ local function test_not_rawequal()
         assert(ok)
         assert(not err)
     end
+
+    -- test that throw error if arguments are not of the same type
+    local ok, err = pcall(function()
+        assertex.not_rawequal(1, false)
+    end)
+    assert(not ok)
+    assert(find(err, 'invalid comparison'))
 end
 
 local function test_greater()
