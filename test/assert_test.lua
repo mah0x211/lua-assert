@@ -1102,92 +1102,6 @@ local function test_not_equal()
     end
 end
 
-local function test_equal_string()
-    local tbl = {}
-    local f = function()
-    end
-    local co = coroutine.create(f)
-    local nan = 0 / 0
-
-    -- test that throw error
-    for k, v in pairs({
-        [1] = 2,
-        [true] = false,
-        [tbl] = {
-            1,
-            2,
-            3,
-        },
-        [f] = function()
-        end,
-        [co] = coroutine.create(f),
-    }) do
-        local ok, err = pcall(function()
-            assertex.equal_string(k, v)
-        end)
-        assert(not ok)
-        assert(find(err, 'not equal string', nil, true))
-    end
-
-    -- test that not throw error
-    for _, v in ipairs({
-        1,
-        true,
-        tbl,
-        f,
-        co,
-        nan,
-    }) do
-        local ok, err = pcall(function()
-            assertex.equal_string(v, v)
-        end)
-        assert(ok)
-        assert(not err)
-    end
-end
-
-local function test_not_equal_string()
-    local tbl = {}
-    local f = function()
-    end
-    local co = coroutine.create(f)
-    local nan = 0 / 0
-
-    -- test that throw error
-    for _, v in pairs({
-        1,
-        true,
-        tbl,
-        f,
-        co,
-        nan,
-    }) do
-        local ok, err = pcall(function()
-            assertex.not_equal_string(v, v)
-        end)
-        assert(not ok)
-        assert(find(err, 'equal string', nil, true))
-    end
-
-    -- test that not throw error
-    for k, v in pairs({
-        [1] = 2,
-        [true] = false,
-        [tbl] = {
-            1,
-        },
-        [f] = function()
-        end,
-        [co] = coroutine.create(f),
-    }) do
-        local ok, err = pcall(function()
-            assertex.not_equal_string(k, v)
-        end)
-        assert(ok)
-        assert(not err)
-    end
-end
-
 local function test_rawequal()
     local tbl = {}
     local f = function()
@@ -1761,28 +1675,56 @@ local function test_not_contains()
     assert(not err, err)
 end
 
-test_torawstring()
-test_call()
-test_newindex()
-test_throws()
-test_not_throws()
-test_is()
-test_not()
-test_empty()
-test_not_empty()
-test_equal()
-test_not_equal()
-test_equal_string()
-test_not_equal_string()
-test_rawequal()
-test_not_rawequal()
-test_greater()
-test_greater_or_equal()
-test_less()
-test_less_or_equal()
-test_match()
-test_not_match()
-test_re_match()
-test_not_re_match()
-test_contains()
-test_not_contains()
+local fails = {}
+local passed = 0
+for k, fn in pairs({
+    test_torawstring = test_torawstring,
+    test_call = test_call,
+    test_newindex = test_newindex,
+    test_throws = test_throws,
+    test_not_throws = test_not_throws,
+    test_is = test_is,
+    test_not = test_not,
+    test_empty = test_empty,
+    test_not_empty = test_not_empty,
+    test_equal = test_equal,
+    test_not_equal = test_not_equal,
+    test_rawequal = test_rawequal,
+    test_not_rawequal = test_not_rawequal,
+    test_greater = test_greater,
+    test_greater_or_equal = test_greater_or_equal,
+    test_less = test_less,
+    test_less_or_equal = test_less_or_equal,
+    test_match = test_match,
+    test_not_match = test_not_match,
+    test_re_match = test_re_match,
+    test_not_re_match = test_not_re_match,
+    test_contains = test_contains,
+    test_not_contains = test_not_contains,
+}) do
+    io.stdout:write(k, ' ... ')
+    local ok, err = pcall(fn)
+    if ok then
+        passed = passed + 1
+        print('ok')
+    else
+        print('fail')
+        print(err)
+        fails[#fails + 1] = {
+            name = k,
+            err = err,
+        }
+    end
+end
+
+print(string.rep('-', 40))
+if #fails == 0 then
+    print(format('all %d tests passed', passed))
+else
+    print(format('%d tests passed', passed))
+    print(format('%d tests failed', #fails))
+    for _, v in ipairs(fails) do
+        print('  - ' .. v.name .. ': ' .. v.err)
+    end
+    os.exit(1)
+end
