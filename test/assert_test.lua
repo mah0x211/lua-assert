@@ -1380,7 +1380,7 @@ local function test_match()
         assertex.match('foo/bar/baz', 'foo,bar')
     end)
     assert(not ok)
-    assert(find(err, 'no match', nil, true), err)
+    assert(find(err, 'should match', nil, true), err)
 
     -- test that throw error if subject is not string
     ok, err = pcall(function()
@@ -1425,7 +1425,7 @@ local function test_not_match()
         assertex.not_match('foo/bar/baz', 'foo/bar')
     end)
     assert(not ok)
-    assert(find(err, ': match', nil, true), err)
+    assert(find(err, 'should not match', nil, true), err)
 
     -- test that throw error if subject is not string
     ok, err = pcall(function()
@@ -1470,7 +1470,7 @@ local function test_re_match()
         assertex.re_match('foo/bar/baz', 'foo,bar')
     end)
     assert(not ok)
-    assert(find(err, 'no re_match', nil, true), err)
+    assert(find(err, 'should match', nil, true), err)
 
     -- test that throw error if subject is not string
     ok, err = pcall(function()
@@ -1515,7 +1515,7 @@ local function test_not_re_match()
         assertex.not_re_match('foo/bar/baz', 'foo/bar')
     end)
     assert(not ok)
-    assert(find(err, ': re_match', nil, true), err)
+    assert(find(err, 'should not match', nil, true), err)
 
     -- test that throw error if subject is not string
     ok, err = pcall(function()
