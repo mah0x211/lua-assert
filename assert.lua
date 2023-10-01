@@ -198,7 +198,7 @@ local function equal(act, exp)
     if eq then
         return act
     end
-    error(format([[not equal:
+    error(format([[the two given values should be equal:
   actual: %q
 expected: %q
 ]], av, ev), 2)
@@ -214,7 +214,7 @@ local function not_equal(act, exp)
     if not eq then
         return act
     end
-    error(format([[equal:
+    error(format([[the two given values should not be equal:
   actual: %q
 expected: %q
 ]], av, ev), 2)

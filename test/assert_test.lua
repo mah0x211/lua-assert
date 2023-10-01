@@ -1008,7 +1008,7 @@ local function test_equal()
             assertex.equal(k, v)
         end)
         assert(not ok)
-        assert(find(err, 'not equal', nil, true))
+        assert(find(err, 'should be equal', nil, true))
     end
 
     -- test that throw error if arguments are not of the same type
@@ -1064,7 +1064,7 @@ local function test_not_equal()
             assertex.not_equal(v, v)
         end)
         assert(not ok)
-        assert(find(err, 'equal', nil, true))
+        assert(find(err, 'should not be equal', nil, true))
     end
 
     -- test that throw error if arguments are not of the same type
