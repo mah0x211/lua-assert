@@ -1603,6 +1603,7 @@ local function test_contains()
                             qux = 'quux',
                             tbl = {},
                         },
+                        qux = 'quux',
                     },
                 },
                 hello = {

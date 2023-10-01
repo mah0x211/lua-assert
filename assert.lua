@@ -494,10 +494,10 @@ _M.not_re_match = not_re_match
 local function is_contains(v, exp)
     if is_string(v) then
         -- verify that a v string contains an exp string
-        return is_match(v, exp)
+        return is_match(v, exp) ~= nil
     elseif not is_table(v) then
         -- verify that a v equal to an exp
-        return is_equal(v, exp)
+        return is_equal(v, exp) ~= nil
     end
 
     local av = flatten(v)
