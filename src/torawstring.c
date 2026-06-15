@@ -19,14 +19,8 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <ctype.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 // lua
 #include <lauxlib.h>
-#include <lua.h>
 
 static int torawstring_lua(lua_State *L)
 {
