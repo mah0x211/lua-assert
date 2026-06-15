@@ -1,3 +1,4 @@
+rockspec_format = "3.0"
 package = "assert"
 version = "scm-1"
 source = {
@@ -16,24 +17,31 @@ dependencies = {
     "regex >= 0.1.0",
     "table-flatten >= 0.3.0",
 }
+build_dependencies = {
+    "luarocks-build-hooks >= 0.8.0",
+}
 build = {
-    type = "builtin",
+    type = "hooks",
+    before_build = "$(extra-vars)",
+    extra_variables = {
+        CFLAGS = "-Wall -Wno-trigraphs -Wmissing-field-initializers -Wreturn-type -Wmissing-braces -Wparentheses -Wno-switch -Wunused-function -Wunused-label -Wunused-parameter -Wunused-variable -Wunused-value -Wuninitialized -Wunknown-pragmas -Wshadow -Wsign-compare",
+    },
+    conditional_variables = {
+        ASSERT_COVERAGE = {
+            CFLAGS = "--coverage",
+            LIBFLAG = "--coverage",
+        },
+    },
     modules = {
-        assert = "assert.lua",
+        ["assert"] = "assert.lua",
         ["assert.escape"] = {
-            sources = {
-                "src/escape.c",
-            },
+            sources = "src/escape.c",
         },
         ["assert.torawstring"] = {
-            sources = {
-                "src/torawstring.c",
-            },
+            sources = "src/torawstring.c",
         },
         ["assert.lightuserdata"] = {
-            sources = {
-                "src/lightuserdata.c",
-            },
+            sources = "src/lightuserdata.c",
         },
     },
 }
