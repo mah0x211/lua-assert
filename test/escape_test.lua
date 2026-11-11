@@ -56,10 +56,25 @@ local function test_escape()
     assert(got == rep('a', 8192) .. '\\n' .. rep('b', 8192))
 end
 
+local function test_escape_large_plain_string()
+    -- Enough fragments to exceed the C API's initially available stack slots,
+    -- including platforms with a larger stdio BUFSIZ.
+    local input = rep('x', 256 * 1024)
+    assert(escape(input) == input)
+end
+
+local function test_escape_large_control_string()
+    -- Escaping also expands the output, increasing the fragment count.
+    local input = rep(string.char(1), 64 * 1024)
+    assert(escape(input) == rep('\\x01', 64 * 1024))
+end
+
 local fails = {}
 local passed = 0
 for k, fn in pairs({
     test_escape = test_escape,
+    test_escape_large_plain_string = test_escape_large_plain_string,
+    test_escape_large_control_string = test_escape_large_control_string,
 }) do
     io.stdout:write(k, ' ... ')
     local ok, err = pcall(fn)

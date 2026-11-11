@@ -21,8 +21,6 @@
  */
 // lua
 #include <lauxlib.h>
-// system
-#include <stdio.h>
 
 static int escape_lua(lua_State *L)
 {
@@ -30,69 +28,47 @@ static int escape_lua(lua_State *L)
     size_t len                    = 0;
     const char *str               = luaL_checklstring(L, 1, &len);
     unsigned char *p              = (unsigned char *)str;
-    char buf[BUFSIZ];
-    size_t head = 0;
-    int argc    = 0;
+    luaL_Buffer buf;
 
-    if (!len) {
-        lua_pushliteral(L, "");
-        return 1;
-    }
-
-    // WARNING: In lua 5.3 and later, values passed to C functions are also
-    // subject to gc, so the value should not be removed from the stack while
-    // it is in use.
+    // Keep the input rooted while buffer operations may allocate or run GC.
     lua_settop(L, 1);
+    luaL_buffinit(L, &buf);
     for (size_t i = 0; i < len; i++) {
         unsigned char c = p[i];
-
-        if (BUFSIZ - head < 5) {
-            lua_pushlstring(L, buf, head);
-            head = 0;
-            argc++;
-        }
 
         switch (c) {
         case 0x1 ... 0x6:
         case 0xe ... 0x1f:
-        case 0x7f:
-            buf[head++] = '\\';
-            buf[head++] = 'x';
-            buf[head++] = dec2hex[c >> 4];
-            buf[head++] = dec2hex[c & 0xf];
+        case 0x7f: {
+            const char escaped[] = {'\\', 'x', dec2hex[c >> 4],
+                                    dec2hex[c & 0xf]};
+            luaL_addlstring(&buf, escaped, sizeof(escaped));
             break;
+        }
 
         case '\0':
-            buf[head++] = '\\';
-            buf[head++] = '0';
+            luaL_addlstring(&buf, "\\0", 2);
             break;
         case '\a':
-            buf[head++] = '\\';
-            buf[head++] = 'a';
+            luaL_addlstring(&buf, "\\a", 2);
             break;
         case '\b':
-            buf[head++] = '\\';
-            buf[head++] = 'b';
+            luaL_addlstring(&buf, "\\b", 2);
             break;
         case '\t':
-            buf[head++] = '\\';
-            buf[head++] = 't';
+            luaL_addlstring(&buf, "\\t", 2);
             break;
         case '\n':
-            buf[head++] = '\\';
-            buf[head++] = 'n';
+            luaL_addlstring(&buf, "\\n", 2);
             break;
         case '\v':
-            buf[head++] = '\\';
-            buf[head++] = 'v';
+            luaL_addlstring(&buf, "\\v", 2);
             break;
         case '\f':
-            buf[head++] = '\\';
-            buf[head++] = 'f';
+            luaL_addlstring(&buf, "\\f", 2);
             break;
         case '\r':
-            buf[head++] = '\\';
-            buf[head++] = 'r';
+            luaL_addlstring(&buf, "\\r", 2);
             break;
 
         case '\\':
@@ -101,16 +77,11 @@ static int escape_lua(lua_State *L)
             }
 
         default:
-            buf[head++] = c;
+            luaL_addchar(&buf, c);
         }
     }
 
-    if (head) {
-        lua_pushlstring(L, buf, head);
-        argc++;
-    }
-
-    lua_concat(L, argc);
+    luaL_pushresult(&buf);
     return 1;
 }
 
