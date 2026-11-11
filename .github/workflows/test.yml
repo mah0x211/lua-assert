@@ -5,6 +5,10 @@ on:
     paths-ignore:
       - '**.md'
       - 'LICENSE'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
 
 jobs:
   luacheck:
@@ -14,7 +18,7 @@ jobs:
     steps:
     -
       name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v7
     -
       name: Install Tools
       run: luarocks install luacheck
@@ -37,6 +41,7 @@ jobs:
           - "5.2.:latest"
           - "5.3.:latest"
           - "5.4.:latest"
+          - "5.5.:latest"
           - "lj-v2.1:latest"
     steps:
     -
@@ -46,7 +51,7 @@ jobs:
         lua -v || true
     -
       name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v7
     -
       name: Install
       run: |
