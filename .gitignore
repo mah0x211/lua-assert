@@ -1,0 +1,16 @@
+# Ignore all hidden files
+.*
+
+# Keep the .gitignore file itself
+!.gitignore
+
+
+# Object files and coverage files
+*.o
+*.out
+*.so
+*.a
+*.gcda
+*.gcno
+*.lcov
+*.gcov
